@@ -68,7 +68,7 @@ struct PLAYER_NAME : public Player {
 
 // Retorna el cami de orig cap a dest
   VAIR calcula_cami(const map_coord &prev, const PI &orig, const PI &dest) {
-    stack<pair<int,int>> S;
+    stack<PI> S;
     PI actual = dest;
     while (actual != orig) {
       S.push(actual);
@@ -86,7 +86,7 @@ struct PLAYER_NAME : public Player {
   }
 
   VAIR path_calculator (map &M, cua &Q, map_vis &dist, map_coord &prev, PI orig){
-    pair<int,int> p = Q.front();
+    PI p = Q.front();
     int v_i = p.first;
     int v_j = p.second;
     Q.pop();
@@ -100,8 +100,21 @@ struct PLAYER_NAME : public Player {
           Q.push({n_i,n_j});
 
           if (M[n_i][n_j] == 't') {
-              VAIR cami = calcula_cami(prev,orig,{n_i,n_j});
-              return cami;
+              Cell celda = cell(n_i,n_j);
+              if(celda.unit_id != -1){
+              Unit unidad = unit(celda.unit_id);
+              Cell celda_o = cell(orig.first,orig.second);
+              Unit unidad_o = unit(celda_o.unit_id);
+              
+                if(unidad_o.health > unidad.health){
+                  VAIR cami = calcula_cami(prev,orig,{n_i,n_j});
+                  return cami;
+                }
+              }
+              else{
+                VAIR cami = calcula_cami(prev,orig,{n_i,n_j});
+                return cami;
+              }
           }
         }
       }
